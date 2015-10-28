@@ -1,0 +1,3 @@
+@CHARSET "UTF-8";
+table {border-collapse: collapse;border: none;}
+table td,th {border: solid #000 1px;}

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        ">
+
+	<!-- 静态资源解析器 -->
+	<mvc:resources mapping="/resources/**" location="/WEB-INF/resources/" />
+	<mvc:resources mapping="/upload/**" location="/upload/" />
+
+	<!-- 打开Spring MVC注解驱动 -->
+	<mvc:annotation-driven validator="validator">
+		
+		<mvc:message-converters>
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<constructor-arg name="defaultCharset"
+					value="#{T(java.nio.charset.Charset).forName('UTF-8')}" />
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<!-- 该路径不包含Servlet名称，例如/dms ,**表示文件夹和文件-->
+			<mvc:mapping path="/backend/restful/category/**"/>
+			<mvc:mapping path="/backend/restful/categorytype/**"/>
+			<mvc:mapping path="/backend/restful/categorytree/**"/>
+			<bean class="com.vimisky.dms.controller.interceptor.CORSWebInterceptor">
+				<property name="responseAccessControlAllowOrigin" value="*" />
+				<property name="responseAccessControlAllowMethods" value = "GET,POST,PUT,PATCH,DELETE" />
+				<!-- 
+				<property name="responseAccessControlAllowHeaders"></property>
+				<property name="responseAccessControlMaxAge"></property>
+				<property name="responseAccessControlAllowCredentials"></property>
+				<property name="responseAccessControlExposeHeaders"></property> -->
+			</bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	<!-- 配置MVC注解 -->
+	<context:component-scan base-package="com.vimisky.dms.controller"></context:component-scan>
+	<context:component-scan base-package="com.vimisky.dms.controller.backend"></context:component-scan>
+
+	<!-- Spring 视图解析器 -->
+	<bean id="jspViewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/views/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	<!-- 支持上传文件 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize">
+			<value>1048576</value>
+		</property>
+	</bean>
+	<!-- SpringMVC在超出上传文件限制时，会抛出org.springframework.web.multipart.MaxUploadSizeExceededException -->
+	<!-- 该异常是SpringMVC在检查上传的文件信息时抛出来的，而且此时还没有进入到Controller方法中 -->
+	<bean id="exceptionResolver"
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<!-- 遇到MaxUploadSizeExceededException异常时，自动跳转到/WEB-INF/jsp/error_fileupload.jsp页面 -->
+				<prop
+					key="org.springframework.web.multipart.MaxUploadSizeExceededException">studentInfo</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<!-- 还有一种路径方式 -->
+				<!-- 
+				<value>WEB-INF/messages/messages</value>
+				<value>classpath:org/hibernate/validator/ValidationMessages</value>
+				 -->				
+				<value>classpath:messages/messages</value>
+				<value>classpath:org/hibernate/validator/ValidationMessages</value>
+			</list>
+		</property>
+		<!-- default is none, use java.utils.properties -->
+		<property name="defaultEncoding" value="UTF-8" />
+		<!-- default is -1, cache forever, never reload -->
+		<property name="cacheSeconds" value="60" />
+		<!-- extends parent class AbstractMessageSource, default is false -->
+		<!-- 
+		<property name="useCodeAsDefaultMessage" value="false" />
+		 -->
+	</bean>
+	<!-- mvc:annotation-driven默认会注入该类，但是如果需要定制，那么就显式注入一下  -->
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<!-- Specify a custom Spring MessageSource for resolving validation messages, 
+		instead of relying on JSR-303's default "ValidationMessages.properties" bundle in the classpath -->
+		<property name="validationMessageSource" ref="messageSource" />
+		<!-- If not specified, JSR-303's default search mechanism will be used -->
+		<!-- 注意，这里并没有使用ref， 因为参数就是让指定一下类名称，而不是对象-->
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
+	</bean>
+</beans>

@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vimisky.dms.entity">
+	<select id="selectGenreType" resultType="com.vimisky.dms.entity.GenreType">
+		select * from dms_main.genre_type
+	</select>
+	<!-- dms_main.category_type 表 -->
+	<select id="selectCategoryTypeByPagingAndSortId" resultMap="categoryTypeResult"
+		fetchSize="256" timeout="30" flushCache="true" useCache="true">
+		select * from dms_main.category_type order by id desc limit
+		#{offset},#{limit}
+	</select>
+	<select id="selectCategoryTypeCount" resultType="int" timeout="30"
+		flushCache="true" useCache="true">
+		select count(*) from dms_main.category_type
+	</select>
+	<select id="selectOldestCategoryType" resultMap="categoryTypeResult"
+		timeout="30" flushCache="true" useCache="true">
+		select * from dms_main.category_type order by id asc limit 1
+	</select>
+	<select id="selectAllCategoryType" resultMap="categoryTypeResult"
+		fetchSize="256" timeout="30" flushCache="true" useCache="true">
+		select * from dms_main.category_type order by id desc
+	</select>
+	<select id="selectCategoryTypeById" resultMap="categoryTypeResult"
+		fetchSize="256" timeout="30" flushCache="true" useCache="true">
+		select * from dms_main.category_type where id = #{id}
+	</select>
+	<select id="selectCategoryTypeByCode" resultMap="categoryTypeResult"
+		fetchSize="256" timeout="30" flushCache="true" useCache="true">
+		select * from dms_main.category_type where code = #{code}
+	</select>
+	<insert id="insertCategoryType" useGeneratedKeys="true">
+		insert into dms_main.category_type
+		(id,name, secondary_name, description, language, thumbnail_url, thumbnail_icon,
+		code, create_time, last_modify_time)
+		values
+		(#{id},#{name},#{secondaryName},#{description},#{language},#{thumbnailUrl},#{thumbnailIcon},#{code},#{createTime},#{lastModifyTime})
+	</insert>
+	<update id="updateCategoryType">
+		update dms_main.category_type set
+		name=#{name},secondary_name=#{secondaryName},description=#{description},language=#{language},
+		thumbnail_url=#{thumbnailUrl}, thumbnail_icon=#{thumbnailIcon},
+		code=#{code}, last_modify_time=#{lastModifyTime}
+		where id = #{id}
+	</update>
+	<update id="updateCategoryTypeByOneField">
+		update dms_main.category_type set ${name}=#{value} where id = #{pkid}
+	</update>
+	<delete id="deleteCategoryType">
+		delete from dms_main.category_type where id = #{id}
+	</delete>
+	<delete id="deleteAllCategoryTypes">
+		delete from dms_main.category_type
+	</delete>
+	<!-- dms_main.category -->
+	<resultMap id="categoryTypeResult" type="com.vimisky.dms.entity.CategoryType">
+		<id property="id" column="id"></id>
+		<result property="name" column="name" />
+		<result property="secondaryName" column="secondary_name" />
+		<result property="description" column="description" />
+		<result property="thumbnailUrl" column="thumbnail_url" />
+		<result property="thumbnailIcon" column="thumbnail_icon" />
+		<result property="language" column="language" />
+		<result property="code" column="code" />
+		<result property="createTime" column="create_time" />
+		<result property="lastModifyTime" column="last_modify_time" />
+	</resultMap>
+	<resultMap id="categoryBriefResult" type="com.vimisky.dms.entity.backend.CategoryBrief">
+		<id property="id" column="category_id"></id>
+		<result property="name" column="category_name" />
+		<result property="thumbnailUrl" column="category_thumbnail_url" />
+		<result property="thumbnailIcon" column="category_thumbnail_icon" />
+		<result property="lastModifyTime" column="category_last_modify_time" />
+		<result property="parentCategoryId" column="category_parent_id"></result>
+		<result property="parentCategoryName" column="category_parent_name"></result>
+		<result property="useState" column="category_use_state"></result>
+		<result property="priority" column="category_priority"></result>		
+		<result property="categoryTypeId" column="category_type_id"></result>		
+		<result property="categoryTypeName" column="category_type_name"></result>
+		<result property="categoryTypeThumbnailUrl" column="category_type_thumbnail_url"></result>		
+		<result property="categoryTypeThumbnailIcon" column="category_type_thumbnail_icon"></result>		
+	</resultMap>
+	<resultMap id="categoryDetailResult" type="com.vimisky.dms.entity.backend.CategoryDetail">
+		<id property="id" column="category_id"></id>
+		<result property="name" column="category_name" />
+		<result property="secondaryName" column="category_secondary_name" />
+		<result property="description" column="category_description" />
+		<result property="thumbnailUrl" column="category_thumbnail_url" />
+		<result property="thumbnailIcon" column="category_thumbnail_icon" />
+		<result property="language" column="category_language" />
+		<result property="code" column="category_code" />
+		<result property="createTime" column="category_create_time" />
+		<result property="lastModifyTime" column="category_last_modify_time" />
+		<result property="parentCategoryId" column="category_parent_id"></result>
+		<result property="parentCategoryName" column="category_parent_name"></result>
+		<result property="useState" column="category_use_state"></result>
+		<result property="priority" column="category_priority"></result>
+		<association property="categoryType" resultMap="categoryTypeResult"
+			columnPrefix="category_type_">
+		</association>
+	</resultMap>
+	<resultMap id="categoryResult" type="com.vimisky.dms.entity.Category">
+		<id property="id" column="category_id"></id>
+		<result property="name" column="category_name" />
+		<result property="secondaryName" column="category_secondary_name" />
+		<result property="description" column="category_description" />
+		<result property="thumbnailUrl" column="category_thumbnail_url" />
+		<result property="thumbnailIcon" column="category_thumbnail_icon" />
+		<result property="language" column="category_language" />
+		<result property="code" column="category_code" />
+		<result property="createTime" column="category_create_time" />
+		<result property="lastModifyTime" column="category_last_modify_time" />
+		<result property="parentCategoryId" column="category_parent_id"></result>
+		<result property="useState" column="category_use_state"></result>
+		<result property="priority" column="category_priority"></result>
+		<result property="categoryTypeId" column="category_type_id"></result>
+	</resultMap>
+	<select id="selectCategoryBriefsByParentId" resultMap="categoryBriefResult"
+		timeout="30" flushCache="true" useCache="true">
+		select
+		c.id as category_id,
+		c.name as category_name,
+		c.thumbnail_url as category_thumbnail_url,
+		c.thumbnail_icon as category_thumbnail_icon,
+		c.last_modify_time as category_last_modify_time,
+		c.parent_id as category_parent_id,
+		pc.name as category_parent_name,
+		c.use_state as category_use_state,
+		c.priority as category_priority,
+		ct.id as category_type_id,
+		ct.name as category_type_name,
+		ct.thumbnail_url as category_type_thumbnail_url,
+		ct.thumbnail_icon as category_type_thumbnail_icon
+		from dms_main.category c
+		left join dms_main.category_type ct on
+		c.category_type_id=ct.id
+		left join dms_main.category pc on
+		c.parent_id=pc.id
+		where c.parent_id=#{parentCategoryId}
+		order by c.id desc
+	</select>		
+	<select id="selectCategoryDetailById" resultMap="categoryDetailResult"
+		timeout="30" flushCache="true" useCache="true">
+		select
+		c.id as category_id,
+		c.name as category_name,
+		c.secondary_name as category_secondary_name,
+		c.description as category_description,
+		c.thumbnail_url as category_thumbnail_url,
+		c.thumbnail_icon as category_thumbnail_icon,
+		c.language as category_language,
+		c.code as category_code,
+		c.create_time as category_create_time,
+		c.last_modify_time as category_last_modify_time,
+		c.parent_id as category_parent_id,
+		pc.name as category_parent_name,
+		c.use_state as category_use_state,
+		c.priority as category_priority,
+		ct.id as category_type_id,
+		ct.name as category_type_name,
+		ct.secondary_name as category_type_secondary_name,
+		ct.description as category_type_description,
+		ct.thumbnail_url as category_type_thumbnail_url,
+		ct.thumbnail_icon as category_type_thumbnail_icon,
+		ct.language as category_type_language,
+		ct.code as category_type_code,
+		ct.create_time as category_type_create_time,
+		ct.last_modify_time as category_type_last_modify_time
+		from dms_main.category c
+		left join dms_main.category_type ct on
+		c.category_type_id=ct.id
+		left join dms_main.category pc on
+		c.parent_id=pc.id
+		where c.id = #{id}
+	</select>
+	<select id="selectCategoryDetailByCode" resultMap="categoryDetailResult"
+		timeout="30" flushCache="true" useCache="true">
+		select
+		c.id as category_id,
+		c.name as category_name,
+		c.secondary_name as category_secondary_name,
+		c.description as category_description,
+		c.thumbnail_url as category_thumbnail_url,
+		c.thumbnail_icon as category_thumbnail_icon,
+		c.language as category_language,
+		c.code as category_code,
+		c.create_time as category_create_time,
+		c.last_modify_time as category_last_modify_time,
+		c.parent_id as category_parent_id,
+		pc.name as category_parent_name,		
+		c.use_state as category_use_state,
+		c.priority as category_priority,
+		ct.id as category_type_id,
+		ct.name as category_type_name,
+		ct.secondary_name as category_type_secondary_name,
+		ct.description as category_type_description,
+		ct.thumbnail_url as category_type_thumbnail_url,
+		ct.thumbnail_icon as category_type_thumbnail_icon,
+		ct.language as category_type_language,
+		ct.code as category_type_code,
+		ct.create_time as category_type_create_time,
+		ct.last_modify_time as category_type_last_modify_time
+		from dms_main.category c
+		left join dms_main.category_type ct on
+		c.category_type_id=ct.id
+		left join dms_main.category pc on
+		c.parent_id=pc.id		
+		where c.code = #{code}
+	</select>
+	<select id="selectCategoryDetailByParent" resultMap="categoryDetailResult"
+		timeout="30" flushCache="true" useCache="true">
+		select
+		c.id as category_id,
+		c.name as category_name,
+		c.secondary_name as category_secondary_name,
+		c.description as category_description,
+		c.thumbnail_url as category_thumbnail_url,
+		c.thumbnail_icon as category_thumbnail_icon,
+		c.language as category_language,
+		c.code as category_code,
+		c.create_time as category_create_time,
+		c.last_modify_time as category_last_modify_time,
+		c.parent_id as category_parent_id,
+		pc.name as category_parent_name,		
+		c.use_state as category_use_state,
+		c.priority as category_priority,
+		ct.id as category_type_id,
+		ct.name as category_type_name,
+		ct.secondary_name as category_type_secondary_name,
+		ct.description as category_type_description,
+		ct.thumbnail_url as category_type_thumbnail_url,
+		ct.thumbnail_icon as category_type_thumbnail_icon,
+		ct.language as category_type_language,
+		ct.code as category_type_code,
+		ct.create_time as category_type_create_time,
+		ct.last_modify_time as category_type_last_modify_time
+		from dms_main.category c
+		left join dms_main.category_type ct on
+		c.category_type_id=ct.id
+		left join dms_main.category pc on
+		c.parent_id=pc.id
+		where c.parent_id = #{parentCategoryId}
+		order by c.id desc
+	</select>
+	<select id="selectCategoryDetailByParentAndCategoryType"
+		resultMap="categoryDetailResult" timeout="30" flushCache="true"
+		useCache="true">
+		select
+		c.id as category_id,
+		c.name as category_name,
+		c.secondary_name as category_secondary_name,
+		c.description as category_description,
+		c.thumbnail_url as category_thumbnail_url,
+		c.thumbnail_icon as category_thumbnail_icon,
+		c.language as category_language,
+		c.code as category_code,
+		c.create_time as category_create_time,
+		c.last_modify_time as category_last_modify_time,
+		c.parent_id as category_parent_id,
+		pc.name as category_parent_name,
+		c.use_state as category_use_state,
+		c.priority as category_priority,		
+		ct.id as category_type_id,
+		ct.name as category_type_name,
+		ct.secondary_name as category_type_secondary_name,
+		ct.description as category_type_description,
+		ct.thumbnail_url as category_type_thumbnail_url,
+		ct.thumbnail_icon as category_type_thumbnail_icon,
+		ct.language as category_type_language,
+		ct.code as category_type_code,
+		ct.create_time as category_type_create_time,
+		ct.last_modify_time as category_type_last_modify_time
+		from dms_main.category c 
+		left join dms_main.category_type ct on
+		c.category_type_id=ct.id
+		left join dms_main.category pc on
+		c.parent_id=pc.id		
+		where c.parent_id = #{parentCategoryId} and c.category_type_id =
+		#{categoryTypeId}
+		order by c.id desc
+	</select>
+
+	<select id="selectOldestCategoryDetail" resultMap="categoryDetailResult"
+		timeout="30" flushCache="true" useCache="true">
+		select
+		c.id as category_id,
+		c.name as category_name,
+		c.secondary_name as category_secondary_name,
+		c.description as category_description,
+		c.thumbnail_url as category_thumbnail_url,
+		c.thumbnail_icon as category_thumbnail_icon,
+		c.language as category_language,
+		c.code as category_code,
+		c.create_time as category_create_time,
+		c.last_modify_time as category_last_modify_time,
+		c.parent_id as category_parent_id,
+		pc.name as category_parent_name,
+		c.use_state as category_use_state,
+		c.priority as category_priority,
+		ct.id as category_type_id,
+		ct.name as category_type_name,
+		ct.secondary_name as category_type_secondary_name,
+		ct.description as category_type_description,
+		ct.thumbnail_url as category_type_thumbnail_url,
+		ct.thumbnail_icon as category_type_thumbnail_icon,
+		ct.language as category_type_language,
+		ct.code as category_type_code,
+		ct.create_time as category_type_create_time,
+		ct.last_modify_time as category_type_last_modify_time
+		from dms_main.category c 
+		left join dms_main.category_type ct on
+		c.category_type_id=ct.id
+		left join dms_main.category pc on
+		c.parent_id=pc.id		
+		order by c.id asc limit 1
+	</select>
+
+	<select id="selectCategoryCount" resultType="int" timeout="30"
+		flushCache="true" useCache="true">
+		select count(*) from dms_main.category
+	</select>
+	<select id="selectCategoryById" resultMap="categoryResult"
+		timeout="30" flushCache="true" useCache="true">
+		select * from dms_main.category where id=#{id}
+	</select>
+	<select id="selectCategoryByCode" resultMap="categoryResult"
+		timeout="30" flushCache="true" useCache="true">
+		select * from dms_main.category where code=#{code}
+	</select>
+	<select id="selectCategoryByParentId" resultMap="categoryResult"
+		timeout="30" flushCache="true" useCache="true">
+		select * from dms_main.category where parent_id=#{parentCategoryId}
+	</select>
+	<select id="selectCategoryByParentIdAndTypeId" resultMap="categoryResult"
+		timeout="30" flushCache="true" useCache="true">
+		select * from dms_main.category where parent_id=#{parentCategoryId} and category_type_id=#{categoryTypeId}
+	</select>
+	<select id="selectOldestCategory" resultMap="categoryResult"
+		timeout="30" flushCache="true" useCache="true">
+		select * from dms_main.category order by id desc limit 1
+	</select>
+	<insert id="insertCategory" useGeneratedKeys="true">
+		insert into dms_main.category (id,name,
+		secondary_name,description,thumbnail_url,
+		thumbnail_icon,language,code,
+		create_time,last_modify_time,category_type_id,parent_id,use_state,priority)
+		values
+		(#{id},#{name},#{secondaryName},#{description},#{thumbnailUrl},#{thumbnailIcon},#{language},#{code},#{createTime},
+		#{lastModifyTime},#{categoryTypeId},#{parentCategoryId},#{useState},#{priority})
+	</insert>
+	<update id="updateCategory">
+		update dms_main.category set
+		name=#{name},secondary_name=#{secondaryName},description=#{description},thumbnail_url=#{thumbnailUrl},
+		thumbnail_icon=#{thumbnailIcon},language=#{language},code=#{code},create_time=#{createTime},last_modify_time=#{lastModifyTime},
+		category_type_id=#{categoryTypeId},parent_id=#{parentCategoryId},use_state=#{useState},priority=#{priority}
+		where id = #{id}
+	</update>
+	<!-- 使用Map作为参数，传到这里，所以可以使用null判断是否要更新某个参数 -->
+	<update id="patchCategory">
+		update dms_main.category
+		<set>
+			<if test="name != null">
+				name = #{name},
+			</if>
+			<if test="secondaryName != null">
+				secondary_name = #{secondaryName},
+			</if>
+			<if test="description != null">
+				description = #{description},
+			</if>
+			<if test="thumbnailUrl != null">
+				thumbnail_url = #{thumbnailUrl},
+			</if>
+			<if test="thumbnailIcon != null">
+				thumbnail_icon = #{thumbnailIcon},
+			</if>
+			<if test="language != null">
+				language = #{language},
+			</if>
+			<if test="code != null">
+				code = #{code},
+			</if>
+			<if test="lastModifyTime != null">
+				last_modify_time = #{lastModifyTime},
+			</if>
+			<if test="categoryTypeId != null">
+				category_type_id = #{categoryTypeId},
+			</if>
+			<if test="parentCategoryId != null">
+				parent_id = #{parentCategoryId},
+			</if>
+			<if test="useState != null">
+				use_state = #{useState},
+			</if>
+			<if test="priority != null">
+				priority = #{priority}
+			</if>			
+		</set>		
+		where id = #{id}
+	</update>
+	<delete id="deleteCategory">
+		delete from dms_main.category where id = #{id}
+	</delete>
+	<delete id="deleteAllCategories">
+		delete from dms_main.category
+	</delete>
+</mapper>

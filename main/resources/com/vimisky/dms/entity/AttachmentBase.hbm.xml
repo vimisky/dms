@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- 
+Entity:
+
+	
+SQL:
+
+ -->        
+<hibernate-mapping package="com.vimisky.dms.entity">
+
+	<class name="AttachmentBase" table="dms_attachment_base"
+    	polymorphism="explicit">
+    	<id name="id" type="long" column="id">
+    		<generator class="identity" />
+    	</id>
+    	<property name="urlString" column="url_string" type="string"
+    		not-null="true">
+    	</property>
+    	<property name="uriString" column="uri_string" type="string"
+    		not-null="true">
+    	</property>
+    	<component name="attachmentFormat" class="com.vimisky.dms.entity.AttachmentFormat">
+    		<property name="primaryType" column="primary_type"></property>
+    		<property name="subType" column="sub_type"></property>
+    	</component>
+    	<many-to-one name="contentBase" column="contentid" lazy="proxy" not-null="true">
+    	</many-to-one>
+	</class>
+</hibernate-mapping>

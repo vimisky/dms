@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	version="1.0">
+	<persistence-unit name="myUnit" transaction-type="RESOURCE_LOCAL">
+
+		
+		<class>org.xinhua.xhslab.model.Student</class>
+		<class>org.xinhua.xhslab.model.University</class>
+		<class>org.xinhua.xhslab.model.Portrait</class>	
+		<class>org.xinhua.xhslab.model.UniversityCategory</class>	
+		<class>org.xinhua.xhslab.model.NMUser</class>
+		<class>org.xinhua.xhslab.model.NMRole</class>
+
+		<class>com.vimisky.utils.account.entity.User</class>
+		<class>com.vimisky.utils.account.entity.Role</class>
+		<class>com.vimisky.utils.account.entity.Permission</class>	
+		
+		<class>weibo4j.model.User</class>
+		<class>weibo4j.model.Status</class>
+		<class>weibo4j.model.Source</class>
+		<class>weibo4j.model.Comment</class>
+
+		<mapping-file> weibo4j/model/User-orm.xml </mapping-file>
+		<mapping-file> weibo4j/model/Status-orm.xml </mapping-file>
+		<mapping-file> weibo4j/model/Source-orm.xml </mapping-file>
+		<mapping-file> weibo4j/model/Comment-orm.xml </mapping-file>
+		<exclude-unlisted-classes />
+	</persistence-unit>
+</persistence>

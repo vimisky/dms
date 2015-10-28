@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<properties>
+		<property name="logfilepath">F:/tclogs/app.log</property>
+	</properties>
+	<appenders>
+		<Console name="stdout">
+			<PatternLayout>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} %p %c %m%n</pattern>
+			</PatternLayout>
+		</Console>
+		<RollingFile name="logfile">
+			<filename>${logfilepath}</filename>
+			<filepattern>F:/tclogs/$${date:yyyy-MM}/app-%d{yyyy-MM-dd-HH}-%i.log.gz</filepattern>
+			<policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="10 MB" />
+			</policies>
+			<PatternLayout>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} %p %c %m%n</pattern>
+			</PatternLayout>
+		</RollingFile>
+	</appenders>
+	<loggers>
+		<root level="info">
+			<appender-ref ref="stdout" />
+			<appender-ref ref="logfile" />			
+		</root>
+	</loggers>
+</configuration>

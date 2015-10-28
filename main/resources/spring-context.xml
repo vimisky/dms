@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/jee
+        http://www.springframework.org/schema/jee/spring-jee-2.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd    
+        http://www.springframework.org/schema/data/jpa
+		http://www.springframework.org/schema/data/jpa/spring-jpa.xsd       
+        ">
+	<context:annotation-config />  
+	<context:component-scan base-package="com.vimisky.dms.dao.ibatisimpl"></context:component-scan>
+	<context:component-scan base-package="com.vimisky.dms.dao.comp"></context:component-scan>
+	<context:component-scan base-package="com.vimisky.dms.service"></context:component-scan>	
+
+	
+
+	<!-- 调度任务管理器 -->
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<!-- <ref bean="cronTrigger" /> -->
+				<!-- <ref bean="mobileStaticsTrigger" /> -->
+			</list>
+		</property>
+	</bean>
+
+	<!-- HibernatePersistence 声明 -->
+	<bean name="hibernatePersistence" class="org.hibernate.ejb.HibernatePersistence" />
+	<!-- JDBC 配置文件 -->
+	<context:property-placeholder
+		ignore-resource-not-found="true" location="classpath:jdbc.properties" />
+	<!-- JNDI 数据源 -->
+	<!-- 为配合本地测试，放弃 -->
+	<!-- <jee:jndi-lookup id="dataSource" jndi-name="jdbc/world"></jee:jndi-lookup> -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass" value="${jdbc.driver}" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<!-- 指定连接数据库连接池的最小连接数 -->
+		<property name="minPoolSize" value="10" />
+		<!-- 指定连接数据库连接池的最大连接数 -->
+		<property name="maxPoolSize" value="30" />
+		<!-- 指定连接数据库连接池的连接的最大空闲时间 -->
+		<property name="maxIdleTime" value="1800" />
+		<property name="acquireIncrement" value="2" />
+		<property name="maxStatements" value="0" />
+		<!-- 指定连接数据库连接池的初始化连接数 -->
+		<property name="initialPoolSize" value="2" />
+		<property name="idleConnectionTestPeriod" value="1800" />
+		<property name="acquireRetryAttempts" value="30" />
+		<property name="breakAfterAcquireFailure" value="true" />
+		<property name="testConnectionOnCheckout" value="false" />
+	</bean>
+	<!-- myBatis SqlSessionFactory 配置，不需要myBatis.cfg.xml文件了 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations" value="classpath:com/vimisky/dms/entity/Entity.myBatis.xml" />
+	</bean>
+    <!-- 配置sqlSessionTemplate --> 
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">  
+        <constructor-arg index="0" ref="sqlSessionFactory" />  
+    </bean> 
+	<!-- 多个persistence unit配置 ，未配置完成 -->
+	<!-- <bean id="pUnitmanager" class="org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager"> 
+		</bean> -->
+	<bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+		<property name="customEditors">
+			<map>
+				<entry key="com.vimisky.dms.entity.CategoryType" value="com.vimisky.dms.utils.propertyeditor.CategoryTypeJsonEditor" />
+			</map>
+		</property>
+	</bean>	
+		
+</beans>

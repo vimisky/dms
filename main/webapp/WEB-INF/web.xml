@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+	<display-name>sta</display-name>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+	<listener>
+		<description>spring context listener</description>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<!-- -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+		  	classpath:spring-context.xml
+  		</param-value>
+	</context-param>
+	<!--好像不行，这是log4j官网给出的web application下配置log4j配置文件的方法 
+	<context-param>
+		<param-name>log4jConfiguration</param-name>
+		<param-value>/WEB-INF/log4j2.xml</param-value>
+	</context-param>
+	 -->
+	<!-- Spring 加载log4j -->
+	<context-param>
+      <param-name>log4jConfigLocation</param-name>
+      <param-value>classpath:log4j.properties</param-value>
+   </context-param>
+   <context-param>
+      <param-name>log4jRefreshInterval</param-name>
+      <param-value>6000</param-value>
+   </context-param>  
+   <!-- CORS support Parameters -->
+
+
+    <listener>
+      <listener-class>
+        org.springframework.web.util.Log4jConfigListener
+      </listener-class>
+   </listener>
+	<!-- CORS -->
+	<filter>
+		<filter-name>corsFilter</filter-name>
+		<filter-class>com.vimisky.dms.controller.filter.CORSFilter</filter-class>
+		<init-param>
+			<param-name>responseAccessControlAllowOrigin</param-name>
+			<param-value>*</param-value>
+		</init-param>
+		<!-- 
+		<init-param>
+			<param-name>responseAccessControlAllowCredentials</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		 -->
+		<!-- 
+		<init-param>
+			<param-name>responseAccessControlExposeHeaders</param-name>
+			<param-value></param-value>
+		</init-param>
+		 -->
+		<init-param>
+			<param-name>responseAccessControlMaxAge</param-name>
+			<param-value>3000</param-value>
+		</init-param>
+		<init-param>
+			<param-name>responseAccessControlAllowMethods</param-name>
+			<param-value>GET,POST,PUT,PATCH,DELETE</param-value>
+		</init-param>
+		<!-- 
+		<init-param>
+			<param-name>responseAccessControlAllowHeaders</param-name>
+			<param-value></param-value>
+		</init-param>
+		 -->
+	</filter>
+	<!-- 
+	<filter-mapping>
+		<filter-name>corsFilter</filter-name>
+		<servlet-name>dms</servlet-name>
+	</filter-mapping> -->
+	<!-- PUT support -->
+	<filter>
+	    <filter-name>httpPutFormFilter</filter-name>
+	    <filter-class>org.springframework.web.filter.HttpPutFormContentFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+	    <filter-name>httpPutFormFilter</filter-name>
+	    <servlet-name>dms</servlet-name>
+	</filter-mapping> 
+
+	<!-- -->
+	<servlet>
+		<servlet-name>dms</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<!-- 如果配置文件是servlet名称加-servlet.xml，则不用配置该初始化参数
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:spring-mvc.xml</param-value>
+		</init-param> -->
+		<init-param>
+			<param-name>dispatchOptionsRequest</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>dms</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
+</web-app>
